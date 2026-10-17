@@ -1,11 +1,22 @@
+import 'dart:async';
+
 import 'package:azkar_new_app/controller/controller.dart';
+import 'package:azkar_new_app/data/app_state.dart';
+import 'package:azkar_new_app/data/notifications/reminder_service.dart';
+import 'package:azkar_new_app/data/prefs/settings_store.dart';
+import 'package:azkar_new_app/design/app_theme.dart';
+import 'package:azkar_new_app/pages/PrayerTimesPage.dart';
+import 'package:azkar_new_app/pages/SettingsPage.dart';
 import 'package:azkar_new_app/models/bless_model.dart';
 import 'package:azkar_new_app/pages/AboutUsPage.dart';
 import 'package:azkar_new_app/pages/AzkarPage.dart';
+import 'package:azkar_new_app/pages/CustomAzkarPage.dart';
 import 'package:azkar_new_app/pages/HomePage.dart';
+import 'package:azkar_new_app/pages/SplashPage.dart';
 import 'package:azkar_new_app/pages/TasbeehRingPage.dart';
 import 'package:azkar_new_app/pages/ThankingAllahPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -34,11 +45,31 @@ void main() async {
     storage.write('blesses', defaultBlesses.map((e) => e.toJson()).toList());
   }
 
-  // Read the 'blesses' data from storage
-  final dynamic storedData = storage.read('blesses');
+  initAppState(storage);
 
-  // Example usage
+  // Register the theme controller early and restore the persisted mode
+  // BEFORE the first frame so the app never flashes a wrong theme.
+  Get.put(Controller()).restore();
+
+  // Local reminders (best-effort). Initialized AFTER the first frame so
+  // plugin/timezone setup never delays startup; a null service disables
+  // reminder controls in Settings instead of faking them.
+  unawaited(initReminders());
+
   runApp(const AzkarApp());
+}
+
+/// Reminder plugin setup. Never throws: failures leave
+/// [ReminderService.current] null and the UI adapts. Safe to call twice.
+Future<void> initReminders() async {
+  try {
+    ReminderService.current = await ReminderService.create();
+    final settings = Get.find<SettingsStore>();
+    await ReminderService.current!.syncFromSettings(settings);
+    await ReminderService.current!.syncPrayerFromSettings(settings);
+  } catch (_) {
+    ReminderService.current = null;
+  }
 }
 
 class AzkarApp extends StatelessWidget {
@@ -46,39 +77,41 @@ class AzkarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(Controller());
-    Map<String, dynamic> theme = controller.mode.value == 'light'
-        ? {
-            'primary': Colors.deepPurple,
-            'text1': Colors.white,
-            'iconMode': Icon(Icons.sunny),
-            'background': Colors.white,
-            'cardBg': Color.fromRGBO(250, 243, 255, 1),
-            'text2': Colors.black,
-            'button1': Color.fromRGBO(45, 175, 240, 1)
-          }
-        : {
-            'primary': Color.fromRGBO(255, 195, 0, 1),
-            'text1': Colors.black,
-            'iconMode': Icon(Icons.nights_stay),
-            'background': Color.fromRGBO(0, 29, 61, 1),
-            'cardBg': Color.fromRGBO(31, 57, 96, 1),
-            'text2': Colors.white,
-            'button1': Color.fromRGBO(255, 195, 0, 1)
-          };
-
-    return GetMaterialApp(
-      routes: {
-        HomePage.id: (context) => HomePage(),
-        AzkarPage.id: (context) => AzkarPage(),
-        TasbeehRingPage.id: (context) => TasbeehRingPage(),
-        ThankingAllahPage.id: (context) => ThankingAllahPage(),
-        AboutUsPage.id: (context) => AboutUsPage(
-              theme: theme,
-            ),
-      },
-      initialRoute: HomePage.id,
-      debugShowCheckedModeBanner: false,
-    );
+    final controller = Get.find<Controller>();
+    return Obx(() {
+      final mode = controller.mode.value;
+      return GetMaterialApp(
+        routes: {
+          HomePage.id: (context) => HomePage(),
+          AzkarPage.id: (context) => AzkarPage(),
+          TasbeehRingPage.id: (context) => TasbeehRingPage(),
+          ThankingAllahPage.id: (context) => ThankingAllahPage(),
+          CustomAzkarPage.id: (_) => const CustomAzkarPage(),
+          CustomAzkarEditorPage.id: (context) {
+            final args = ModalRoute.of(context)?.settings.arguments;
+            return CustomAzkarEditorPage(
+                existingId: args is String ? args : null);
+          },
+          PrayerTimesPage.id: (context) => const PrayerTimesPage(),
+          SettingsPage.id: (context) => const SettingsPage(),
+          AboutUsPage.id: (context) => const AboutUsPage(),
+          SplashPage.id: (context) => const SplashPage(),
+        },
+        initialRoute: SplashPage.id,
+        debugShowCheckedModeBanner: false,
+        locale: const Locale('ar'),
+        supportedLocales: const [Locale('ar'), Locale('en')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        theme: buildLightTheme(),
+        darkTheme: mode == 'amoled' ? buildAmoledTheme() : buildDarkTheme(),
+        themeMode: mode == 'light'
+            ? ThemeMode.light
+            : (mode == 'system' ? ThemeMode.system : ThemeMode.dark),
+      );
+    });
   }
 }

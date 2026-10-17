@@ -1,8 +1,12 @@
 dev_dependencies:
   flutter_launcher_icons: "^0.13.1"
 
+# Launcher icon generated from the user-supplied SVG brand mark.
+# Sources: assets/icon-source/*.svg (do NOT edit; rerun tool/make_icons.sh).
 flutter_launcher_icons:
-  android: "launcher_icon"
+  android: true
   ios: true
-  image_path: "assets/icons/9939270.png"
+  image_path: "assets/icon-generated/splash/splash_1024.png"
+  adaptive_icon_background: "#F7F4EE"
+  adaptive_icon_foreground: "assets/icon-generated/foreground/ic_fg_xxxhdpi.png"
   min_sdk_android: 21 # android min sdk min:16, default 21

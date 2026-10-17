@@ -1,30 +1,32 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-
+import 'package:azkar_new_app/controller/controller.dart';
+import 'package:azkar_new_app/data/app_state.dart';
 import 'package:azkar_new_app/main.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+
+import 'test_helpers.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  // Fixture I/O in real async (see home_test.dart): never inside bodies.
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    await mockPathProvider();
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  setUp(() async {
+    await GetStorage.init();
+    Get.reset();
+    initAppState(GetStorage());
+    Get.put(Controller());
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('app boots into branded splash', (tester) async {
+    await tester.pumpWidget(const AzkarApp());
+    await tester.pump(const Duration(milliseconds: 200));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.textContaining('أُنس'), findsWidgets);
+    expect(find.text('رفيق يومك'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

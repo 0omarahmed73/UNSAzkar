@@ -1,9 +1,11 @@
 flutter_native_splash:
-  color: "#ffffff"
-  image: assets/icons/9939270.png
-  color_dark: "#121212"
+  # Brand palette + user-supplied mark (assets/icon-source/, integrated).
+  color: "#F7F4EE"
+  image: assets/icon-generated/splash/splash_1024.png
+  color_dark: "#0A1B2D"
+  image_dark: assets/icon-generated/splash/splash_1024.png
 
   android_12:
-    image: assets/icons/9939270.png
-    icon_background_color: "#ffffff"
-    icon_background_color_dark: "#121212"
+    image: assets/icon-generated/splash/splash_1024.png
+    icon_background_color: "#F7F4EE"
+    icon_background_color_dark: "#0A1B2D"

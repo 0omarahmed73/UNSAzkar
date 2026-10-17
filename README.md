@@ -1,27 +1,79 @@
-# Muslim Azkar
+# أُنس | UNS — رفيق يومك
 
-Welcome to the "Muslim Azkar" app, a comprehensive collection of daily Azkar (remembrances) and Duas (supplications) from the Quran and Sunnah, along with various other features to help Muslims remember Allah's blessings, make supplications, and engage in Tasbeeh.
+تطبيق أذكار يومي (Flutter) يدعم العربية وواجهة RTL، مع ميزات الذكر، التسبيح، الدعاء، وتتبع الورد اليومي.
 
-## Features
+## الميزات
 
-- **Morning and Evening Azkar**: The app includes a collection of morning and evening Azkar for daily recitation.
-- **Various Types of Azkar**: Includes sleep Azkar, waking up Azkar, Azkar for entering and leaving the house, and many others.
-- **Tasbeeh Counter**: An electronic Tasbeeh counter feature to help users easily perform Tasbeeh.
-- **Blessings List**: A list of blessings that users can add to and review daily to remember and thank Allah.
-- **Dua Section**: Includes Duas from the Quran and Sunnah, along with the etiquettes of making Dua.
-- **Random Ayah and Hadith Display**: A feature to display a random Ayah from the Quran and a Hadith from Sahih Bukhari each time the app is used.
-- **Day and Night Mode**: Users can switch between day and night modes for their comfort.
-- **Charity for Deceased Muslims**: The app is intended as a continuous charity (Sadaqah Jariyah) for the souls of all deceased Muslims.
+- أذكار الصباح والمساء وباقي التصنيفات اليومية.
+- قارئ ذكر مع عدّاد تكرار وحفظ التقدم.
+- سبحة رقمية مع اهتزاز اختياري.
+- صفحة دعاء + ميزة **شكر النعم**.
+- آية يومية وحديث يومي (محليًا بدون اعتماد شبكة).
+- مواقيت الصلاة مع الموقع (GPS / خريطة / مدينة يدويًا).
+- تذكيرات محلية قابلة للتفعيل من الإعدادات.
+- أوضاع مظهر: Light / Dark / AMOLED / System.
 
-## Screenshots
+## لقطات شاشة
 
 ![Home Page](home.png)
 ![Azkar List](azkar_list.png)
 ![Tasbeeh Counter](tasbeeh.png)
 
-## Installation
+## التشغيل المحلي
 
-1. Make sure you have [Flutter](https://flutter.dev/docs/get-started/install) installed on your device.
-2. Clone this repository:
-   ```bash
-   git clone https://github.com/your-username/azkar-app.git
+### المتطلبات
+
+- Flutter SDK (stable)
+- Dart (يأتي مع Flutter)
+
+### أوامر أساسية
+
+```bash
+flutter pub get
+flutter run
+```
+
+### الاختبارات
+
+```bash
+flutter test
+```
+
+### بناء APK (Android)
+
+```bash
+flutter build apk --release
+```
+
+الملف الناتج:
+
+`build/app/outputs/flutter-apk/app-release.apk`
+
+## نسخة الويب (PWA)
+
+بناء نسخة ويب إنتاجية:
+
+```bash
+flutter build web --release
+```
+
+الملفات الناتجة:
+
+`build/web`
+
+> المشروع يحتوي `web/manifest.json` وإعدادات PWA الأساسية.
+
+## النشر على Vercel
+
+هذا المشروع مُعد للنشر كـ SPA عبر `vercel.json`.
+
+### نشر سريع
+
+```bash
+npx vercel deploy build/web --prod
+```
+
+## ملاحظات
+
+- المحتوى الديني محفوظ داخل التطبيق، ويجب عدم تعديله إلا عن قصد ومراجعة.
+- إن واجهت مشاكل في التنبيهات/الاهتزاز على جهاز فعلي، تحقق من أذونات النظام داخل إعدادات التطبيق.
