@@ -15,9 +15,7 @@
 
 ## لقطات شاشة
 
-![Home Page](home.png)
-![Tasbeeh Counter](tasbeeh.png)
-![Azkar List](azkar_list.png)
+
 
 ## التشغيل المحلي
 
