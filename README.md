@@ -16,9 +16,9 @@
 ## لقطات شاشة
 
 
-![Home Page](home.png)
-![Tasbeeh Counter](tasbeeh.png)
-![Azkar List](azkar_list.png)
+![Home Page](home1.png)
+![Tasbeeh Counter](tasbeeh1.png)
+![Azkar List](azkar_list1.png)
 ## التشغيل المحلي
 
 ### المتطلبات
